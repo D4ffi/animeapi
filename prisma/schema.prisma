@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Anime {
+  id            Int           @id @default(autoincrement())
+  title         String
+  japaneseTitle String?
+  description   String?       @db.Text
+  genres        String[]      // Array de géneros en PostgreSQL
+  episodes      Int?
+  status        AnimeStatus   @default(UPCOMING)
+  releaseYear   Int?
+  season        AnimeSeason?
+  rating        Float?
+  coverImage    String?
+  bannerImage   String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relaciones
+  comments      Comment[]
+  characters    Character[]
+
+  @@map("animes") // Nombre de la tabla en Supabase
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  rating    Int?
+  author    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relación con Anime
+  animeId   Int
+  anime     Anime    @relation(fields: [animeId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Character {
+  id          Int     @id @default(autoincrement())
+  name        String
+  japaneseName String?
+  description String? @db.Text
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relación con Anime
+  animeId     Int
+  anime       Anime   @relation(fields: [animeId], references: [id], onDelete: Cascade)
+
+  @@map("characters")
+}
+
+enum AnimeStatus {
+  AIRING
+  FINISHED
+  UPCOMING
+  CANCELED
+}
+
+enum AnimeSeason {
+  WINTER
+  SPRING
+  SUMMER
+  FALL
+}
