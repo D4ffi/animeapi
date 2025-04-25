@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const animeService = require('../services/animeService');
 const animeValidator = require('../middleware/animeValidator');
+const animeController = require('../controller/animeController');
 
 // Middleware para capturar errores en operaciones asíncronas
 const asyncHandler = fn => (req, res, next) => {
@@ -74,5 +75,10 @@ router.delete('/:id',
         res.status(204).end();
     })
 );
+
+// Rutas relacionadas con géneros
+router.get('/:id/genres', animeController.getAnimeGenres);
+router.post('/:animeId/genres/:genreId', animeController.addGenreToAnime);
+router.delete('/:animeId/genres/:genreId', animeController.removeGenreFromAnime);
 
 module.exports = router;

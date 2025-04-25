@@ -9,10 +9,10 @@ dotenv.config();
 const animeRoutes = require('./routes/animeRoutes');
 const characterRoutes = require('./routes/characterRoutes');
 const commentRoutes = require('./routes/commentRoutes');
+const genreRoutes = require('./routes/genreRoutes'); // Nueva importación
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 
 // Middleware
 app.use(cors());
@@ -28,6 +28,7 @@ app.get('/', (req, res) => {
 app.use('/api/animes', animeRoutes);
 app.use('/api/characters', characterRoutes);
 app.use('/api/comments', commentRoutes);
+app.use('/api/genres', genreRoutes); // Nueva ruta
 
 // Importar servicios para rutas anidadas
 const characterService = require('./services/characterService');

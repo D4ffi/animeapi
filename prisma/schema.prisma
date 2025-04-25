@@ -32,6 +32,8 @@ model Anime {
   // Relaciones
   comments      Comment[]
   characters    Character[]
+  // Relación con géneros
+  animeGenres   AnimeGenre[]
 
   @@map("animes") // Nombre de la tabla en Supabase
 }
@@ -65,6 +67,33 @@ model Character {
   anime       Anime   @relation(fields: [animeId], references: [id], onDelete: Cascade)
 
   @@map("characters")
+}
+
+// Nuevo modelo para géneros
+model Genre {
+  id           Int         @id @default(autoincrement())
+  name         String      @unique
+  description  String?     @db.Text
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  // Relación con animes
+  animeGenres  AnimeGenre[]
+
+  @@map("genres")
+}
+
+// Tabla de relación entre Anime y Genre (muchos a muchos)
+model AnimeGenre {
+  animeId     Int
+  genreId     Int
+
+  // Relaciones
+  anime       Anime     @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  genre       Genre     @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([animeId, genreId])
+  @@map("anime_genres")
 }
 
 enum AnimeStatus {
